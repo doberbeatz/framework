@@ -1,6 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
@@ -50,10 +51,11 @@ class FrameworkTest extends TestCase
             ->will($this->returnValue($this->createMock(RequestContext::class)))
         ;
 
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
         $controllerResolver = new ControllerResolver();
         $argumentResolver = new ArgumentResolver();
 
-        $framework = new Framework($matcher, $controllerResolver, $argumentResolver);
+        $framework = new Framework($dispatcher, $matcher, $controllerResolver, $argumentResolver);
 
         $response = $framework->handle(new Request());
 
@@ -75,9 +77,10 @@ class FrameworkTest extends TestCase
             ->method('getContext')
             ->will($this->returnValue($this->createMock(RequestContext::class)));
 
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
         $controllerResolver = $this->createMock(ControllerResolverInterface::class);
         $argumentResolver = $this->createMock(ArgumentResolverInterface::class);
 
-        return new Framework($matcher, $controllerResolver, $argumentResolver);
+        return new Framework($dispatcher, $matcher, $controllerResolver, $argumentResolver);
     }
 }
